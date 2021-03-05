@@ -7,7 +7,7 @@ import { Led } from '../../types';
 import LedsContext from '../../context/LedsContext';
 
 type State = {
-  leds: Array<Led>;
+  leds: Led[];
 };
 
 export default class App extends React.Component<Record<string, unknown>, State> {
@@ -17,16 +17,19 @@ export default class App extends React.Component<Record<string, unknown>, State>
         id: 0,
         name: 'Power',
         selected: false,
+        options: [],
       },
       {
         id: 2,
         name: 'Skull',
         selected: false,
+        options: [],
       },
       {
         id: 3,
         name: 'Eyes',
         selected: false,
+        options: [],
       },
     ],
   };
@@ -64,15 +67,15 @@ export default class App extends React.Component<Record<string, unknown>, State>
                   leaveTo="-translate-x-full"
                 >
                   <div className="absolute inset-0 py-6 px-8">
-                    <div className="h-full">
-                      <Options />
-                    </div>
+                    <Options />
                   </div>
                 </Transition>
               </div>
               <div className="flex-1 relative z-0 overflow-y-auto focus:outline-none">
-                <div className="absolute inset-0 py-6 px-4 sm:px-6 lg:px-8">
-                  <div className="h-full border-2 border-gray-200 border-dashed rounded-lg"></div>
+                <div className="absolute inset-0 py-6 px-8">
+                  {leds.map((led: Led) => (
+                    <p key={led.id}>set_indicator,{led.id},0</p>
+                  ))}
                 </div>
               </div>
             </LedsContext.Provider>
