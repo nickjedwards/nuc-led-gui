@@ -2,10 +2,24 @@ import React from 'react';
 
 import LedsContext from '../../context/LedsContext';
 
-export default class Frequency extends React.Component {
+type State = {
+  frequency: number;
+};
+
+export default class Frequency extends React.Component<Record<string, unknown>, State> {
   static contextType = LedsContext;
 
   context!: React.ContextType<typeof LedsContext>;
+
+  state = {
+    frequency: 10,
+  };
+
+  onChange(frequency: React.ChangeEvent<HTMLInputElement>): void {
+    this.context.decorate('frequency', frequency.target.valueAsNumber);
+
+    this.setState({ frequency: frequency.target.valueAsNumber });
+  }
 
   render(): JSX.Element {
     return (
@@ -22,7 +36,8 @@ export default class Frequency extends React.Component {
             min="1"
             max="10"
             step="1"
-            defaultValue="10"
+            defaultValue={this.state.frequency}
+            onChange={this.onChange.bind(this)}
           />
         </div>
       </div>

@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Led } from '../../../types';
+import Led from '../../../models/Led';
 import LedsContext from '../../../context/LedsContext';
 
 type Props = {

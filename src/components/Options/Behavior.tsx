@@ -2,6 +2,7 @@ import React from 'react';
 import { Listbox, Transition } from '@headlessui/react';
 
 import LedsContext from '../../context/LedsContext';
+import { Behaviors } from '../../enums';
 
 type State = {
   behavior: string;
@@ -13,19 +14,20 @@ export default class Behavior extends React.Component<Record<string, unknown>, S
   context!: React.ContextType<typeof LedsContext>;
 
   state = {
-    behavior: 'Solid',
+    behavior: Behaviors[Behaviors.Solid],
   };
 
+  onChange(behavior: string): void {
+    this.context.decorate('behavior', Behaviors[behavior as keyof typeof Behaviors]);
+
+    this.setState({ behavior });
+  }
+
   render(): JSX.Element {
-    const behaviors: string[] = ['Solid', 'Breath', 'Pulse', 'Strobe'];
+    const behaviors: string[] = Object.keys(Behaviors).filter((behavior: string) => isNaN(Number(behavior)));
 
     return (
-      <Listbox
-        as="div"
-        className="mt-4"
-        value={this.state.behavior}
-        onChange={(behavior: string) => this.setState({ behavior })}
-      >
+      <Listbox as="div" value={this.state.behavior} onChange={this.onChange.bind(this)}>
         {({ open }) => (
           <>
             <Listbox.Label className="block text-sm leading-5 font-medium text-gray-700">Behavior</Listbox.Label>

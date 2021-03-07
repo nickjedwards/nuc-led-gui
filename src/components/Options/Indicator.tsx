@@ -2,25 +2,40 @@ import React from 'react';
 import { Listbox, Transition } from '@headlessui/react';
 
 import LedsContext from '../../context/LedsContext';
+import { Indicators } from '../../enums';
 
 type State = {
   indicator: string;
 };
 
-export default class Behavior extends React.Component<Record<string, unknown>, State> {
+export default class Indicator extends React.Component<Record<string, unknown>, State> {
   static contextType = LedsContext;
 
   context!: React.ContextType<typeof LedsContext>;
 
-  state = {
-    indicator: 'Power',
+  state: State = {
+    indicator: Indicators[Indicators.Off],
   };
 
+  onChange(indicator: string): void {
+    const value: number = Indicators[indicator as keyof typeof Indicators];
+
+    this.context.setIndicator(value);
+    this.context.decorate('indicator', value);
+
+    this.setState({ indicator });
+  }
+
   render(): JSX.Element {
-    const indicators: string[] = ['Power', 'Off'];
+    const indicators: string[] = Object.keys(Indicators).filter((indicator: string) => isNaN(Number(indicator)));
 
     return (
-      <Listbox as="div" value={this.state.indicator} onChange={(indicator: string) => this.setState({ indicator })}>
+      <Listbox
+        as="div"
+        className={this.state.indicator !== Indicators[Indicators.Off] ? 'mt-4' : ''}
+        value={this.state.indicator}
+        onChange={this.onChange.bind(this)}
+      >
         {({ open }) => (
           <>
             <Listbox.Label className="block text-sm leading-5 font-medium text-gray-700">Indicator</Listbox.Label>

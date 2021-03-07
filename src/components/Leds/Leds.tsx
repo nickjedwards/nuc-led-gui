@@ -2,7 +2,7 @@ import React from 'react';
 
 import LedItem from './Led/Led';
 import LedsContext from '../../context/LedsContext';
-import { Led } from '../../types';
+import Led from '../../models/Led';
 
 export default class Leds extends React.Component {
   static contextType = LedsContext;

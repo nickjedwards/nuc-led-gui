@@ -3,7 +3,6 @@ import React from 'react';
 import Behavior from './Behavior';
 import Brightness from './Brightness';
 import Frequency from './Frequency';
-import Indicator from './Indicator';
 import LedsContext from '../../context/LedsContext';
 
 export default class Options extends React.Component {
@@ -19,8 +18,6 @@ export default class Options extends React.Component {
         <Brightness />
 
         <Frequency />
-
-        <Indicator />
       </>
     );
   }

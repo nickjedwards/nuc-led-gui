@@ -2,10 +2,24 @@ import React from 'react';
 
 import LedsContext from '../../context/LedsContext';
 
-export default class Brightness extends React.Component {
+type State = {
+  brightness: number;
+};
+
+export default class Brightness extends React.Component<Record<string, unknown>, State> {
   static contextType = LedsContext;
 
   context!: React.ContextType<typeof LedsContext>;
+
+  state = {
+    brightness: 50,
+  };
+
+  onChange(brightness: React.ChangeEvent<HTMLInputElement>): void {
+    this.context.decorate('brightness', brightness.target.valueAsNumber);
+
+    this.setState({ brightness: brightness.target.valueAsNumber });
+  }
 
   render(): JSX.Element {
     return (
@@ -22,7 +36,8 @@ export default class Brightness extends React.Component {
             min="1"
             max="100"
             step="1"
-            defaultValue="50"
+            defaultValue={this.state.brightness}
+            onChange={this.onChange.bind(this)}
           />
         </div>
       </div>
