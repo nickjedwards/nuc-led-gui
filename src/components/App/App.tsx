@@ -2,7 +2,10 @@ import React from 'react';
 import { Transition } from '@headlessui/react';
 
 import LedsComponent from '../Leds/Leds';
-import Options from '../Options/Options';
+import Behavior from '../Options/Behavior';
+import Brightness from '../Options/Brightness';
+import Color from '../Options/Color';
+import Frequency from '../Options/Frequency';
 import Indicator from '../Options/Indicator';
 
 import Led from '../../models/Led';
@@ -77,6 +80,60 @@ export default class App extends React.Component<Record<string, unknown>, State>
     this.setState({ leds });
   }
 
+  icon(name: string): JSX.Element {
+    switch (name) {
+      case Leds[Leds.Power]:
+        return (
+          <svg
+            className="-ml-1.5 mr-1 h-5 w-5 text-gray-600"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+          </svg>
+        );
+      case Leds[Leds.Skull]:
+        return (
+          <svg
+            className="-ml-1.5 mr-1 h-5 w-5 text-gray-600"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
+          </svg>
+        );
+      case Leds[Leds.Eyes]:
+        return (
+          <svg
+            className="-ml-1.5 mr-1 h-5 w-5 text-gray-600"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+            />
+          </svg>
+        );
+      default:
+        return <></>;
+    }
+  }
+
   render(): JSX.Element {
     return (
       <div className="h-screen flex overflow-hidden bg-gray-100">
@@ -107,9 +164,9 @@ export default class App extends React.Component<Record<string, unknown>, State>
                   leaveTo="-translate-x-full"
                 >
                   <div className="absolute inset-0 py-6 px-8">
-                    {this.state.indicator < 6 && (
+                    {this.state.indicator < Indicators.Off && (
                       <Transition
-                        show={true}
+                        show={this.state.indicator < Indicators.Off}
                         enter="transition-opacity duration-25"
                         enterFrom="opacity-0"
                         enterTo="opacity-100"
@@ -117,11 +174,17 @@ export default class App extends React.Component<Record<string, unknown>, State>
                         leaveFrom="opacity-100"
                         leaveTo="opacity-0"
                       >
-                        <Options />
+                        <Behavior />
+
+                        <Brightness />
+
+                        <Color />
+
+                        <Frequency />
                       </Transition>
                     )}
 
-                    <Indicator />
+                    <Indicator indicator={this.state.indicator} />
                   </div>
                 </Transition>
               </div>
@@ -129,12 +192,60 @@ export default class App extends React.Component<Record<string, unknown>, State>
                 <div className="absolute inset-0 py-6 px-8">
                   {this.state.leds.map((led: Led) => (
                     <div key={led.id}>
-                      <strong>{led.name}</strong>
-                      <ul>
-                        {led.getOptions().map((option: string, index: number) => (
-                          <li key={index}>{option}</li>
-                        ))}
-                      </ul>
+                      <div className="relative mb-4">
+                        <div className="absolute inset-0 flex items-center" aria-hidden="true">
+                          <div className="w-full border-t border-gray-300"></div>
+                        </div>
+                        <div className="relative flex items-center justify-between">
+                          <div className="flex items-center pr-3 bg-gray-100 text-lg font-medium text-gray-900">
+                            {this.icon(led.name)}
+                            <span>{led.name}</span>
+                          </div>
+                          <button
+                            type="button"
+                            className="inline-flex items-center shadow-sm px-4 py-1.5 border border-gray-300 text-sm leading-5 font-medium rounded-full text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                          >
+                            <svg
+                              className="-ml-1.5 mr-1 h-5 w-5 text-gray-400"
+                              xmlns="http://www.w3.org/2000/svg"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke="currentColor"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                              />
+                            </svg>
+                            <span>Run</span>
+                          </button>
+                        </div>
+                      </div>
+                      <div key={led.id} className="bg-gray-200 overflow-hidden rounded-lg mb-4">
+                        <div className="px-4 py-5 sm:p-6">
+                          <ul>
+                            {led.isSelected() ? (
+                              <Transition
+                                show={led.isSelected()}
+                                enter="transition-opacity duration-25"
+                                enterFrom="opacity-0"
+                                enterTo="opacity-100"
+                                leave="transition-opacity duration-50"
+                                leaveFrom="opacity-100"
+                                leaveTo="opacity-0"
+                              >
+                                {led.getOptions().map((option: string, index: number) => (
+                                  <li key={index}>{option}</li>
+                                ))}
+                              </Transition>
+                            ) : (
+                              <></>
+                            )}
+                          </ul>
+                        </div>
+                      </div>
                     </div>
                   ))}
                 </div>

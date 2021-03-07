@@ -4,17 +4,21 @@ import { Listbox, Transition } from '@headlessui/react';
 import LedsContext from '../../context/LedsContext';
 import { Indicators } from '../../enums';
 
+type Props = {
+  indicator: number;
+};
+
 type State = {
   indicator: string;
 };
 
-export default class Indicator extends React.Component<Record<string, unknown>, State> {
+export default class Indicator extends React.Component<Props, State> {
   static contextType = LedsContext;
 
   context!: React.ContextType<typeof LedsContext>;
 
   state: State = {
-    indicator: Indicators[Indicators.Off],
+    indicator: Indicators[this.props.indicator],
   };
 
   onChange(indicator: string): void {
